@@ -2,7 +2,7 @@
 
 # Hold most of the logic for this game
 class Hangman
-  attr_reader :remaining_turn
+  attr_reader :remaining_turn, :word_guessed_in_full
   attr_accessor :secret_word, :current_progress
 
   def initialize(turn = 8)
@@ -10,6 +10,7 @@ class Hangman
     @remaining_turn = turn
     @secret_word = pick_a_word_from_file
     @current_progress = Array.new(secret_word.length, '_')
+    @word_guessed_in_full = false
   end
 
   def pick_a_word_from_file(filepath = './google-10000-english-no-swears.txt')
@@ -19,12 +20,17 @@ class Hangman
     word
   end
 
-  def check_input(input_char)
-    indices = locate_indices(input_char)
-    if indices.empty?
-      @remaining_turn -= 1
+  def check_input(input)
+    if input == secret_word
+      @current_progress = input.chars
+      @word_guessed_in_full = true
     else
-      update_progess(input_char, indices)
+      indices = locate_indices(input)
+      if indices.empty?
+        @remaining_turn -= 1
+      else
+        update_progess(input, indices)
+      end
     end
   end
 
@@ -40,6 +46,8 @@ class Hangman
   private
 
   def locate_indices(input_char)
+    return [] if input_char.length != 1
+
     indices = []
     secret_word.chars.each_with_index do |char, index|
       indices.append(index) if char == input_char

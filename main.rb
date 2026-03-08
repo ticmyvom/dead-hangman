@@ -21,4 +21,5 @@ if hm.secret_word_guessed?
   end
 else
   puts "No turns left to guess. The secret word is #{hm.secret_word}."
+  puts 'As a punishment, do dead hang for 5 seconds and then perform 2 repetitions of pull-up or one of its variants.'
 end

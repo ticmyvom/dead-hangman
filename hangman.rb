@@ -3,7 +3,7 @@
 # Hold most of the logic for this game
 class Hangman
   attr_reader :remaining_turn, :word_guessed_in_full
-  attr_accessor :secret_word, :current_progress
+  attr_accessor :secret_word, :current_progress, :guessed_characters
 
   def initialize(turn = 8)
     # have a function that display the status depending on how many turns remain?
@@ -11,6 +11,7 @@ class Hangman
     @secret_word = pick_a_word_from_file
     @current_progress = Array.new(secret_word.length, '_')
     @word_guessed_in_full = false
+    @guessed_characters = Set.new
   end
 
   def pick_a_word_from_file(filepath = './google-10000-english-no-swears.txt')
@@ -20,17 +21,23 @@ class Hangman
     word
   end
 
+  # return message
   def check_input(input)
     if input == secret_word
       @current_progress = input.chars
       @word_guessed_in_full = true
     else
+      input = sanitize_input(input)
+
+      return :character_guessed if guessed_characters.include?(input)
+
       indices = locate_indices(input)
       if indices.empty?
         @remaining_turn -= 1
       else
         update_progess(input, indices)
       end
+      guessed_characters.add(input)
     end
   end
 
@@ -45,9 +52,13 @@ class Hangman
 
   private
 
-  def locate_indices(input_char)
-    return [] if input_char.length != 1
+  def sanitize_input(input)
+    return '' if input.length != 1
 
+    input
+  end
+
+  def locate_indices(input_char)
     indices = []
     secret_word.chars.each_with_index do |char, index|
       indices.append(index) if char == input_char

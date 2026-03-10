@@ -9,8 +9,13 @@ while hm.remaining_turn.positive? && !hm.secret_word_guessed?
   puts 'Enter one character that you think would be in this word or the word itself:'
   input = gets.chomp
 
-  hm.check_input(input)
+  status = hm.check_input(input)
+  case status
+  when :character_guessed
+    puts "You've guessed #{input} already."
+  end
   hm.view_progress
+  puts "Previous guesses: #{hm.guessed_characters.join(', ')}\n\n"
 end
 
 if hm.secret_word_guessed?

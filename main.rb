@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'hangman'
+require_relative 'hangman_graphics'
 
 saved_game_path = './game_saves'
 
@@ -51,6 +52,7 @@ end
 status = ''
 if [1, 2].include?(input)
   while hm.remaining_turn.positive? && !hm.secret_word_guessed?
+    puts HANGMAN_STAGES[hm.remaining_turn]
     hm.view_progress
 
     puts "You have #{hm.remaining_turn} turns remaining."
@@ -78,8 +80,9 @@ if [1, 2].include?(input)
     end
   else
     unless status == :saved
+      puts HANGMAN_STAGES[hm.remaining_turn]
       puts "No turns left to guess. The secret word is #{hm.secret_word}."
-      puts 'As a punishment, do dead hang for 5 seconds and then perform 2 repetitions of pull-up or one of its variants.'
+      puts 'As a punishment, do dead hang for 5 seconds, then perform 2 repetitions of pull-up or one of its variants.'
     end
   end
 end

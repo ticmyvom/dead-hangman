@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'hangman'
-require_relative 'hangman_graphics'
+require_relative 'display_helper'
 
 saved_game_path = './game_saves'
 
@@ -34,7 +34,7 @@ when 2
     filename = current_saved_game.fetch(index, 'invalid')
 
     until filename != 'invalid'
-      puts 'Index entered is invalid. Please try again:'
+      puts(DisplayHelper.formatting('red', 'Index entered is invalid. Please try again:'))
       index = gets.chomp.to_i
       filename = current_saved_game.fetch(index, 'invalid')
     end
@@ -53,7 +53,7 @@ end
 status = ''
 if [1, 2].include?(input)
   while hm.remaining_turn.positive? && !hm.secret_word_guessed?
-    puts HANGMAN_STAGES[hm.remaining_turn]
+    puts DisplayHelper::HANGMAN_STAGES[hm.remaining_turn]
     hm.view_progress
 
     puts "You have #{hm.remaining_turn} turns remaining."
@@ -64,7 +64,7 @@ if [1, 2].include?(input)
     status = hm.check_input(input)
     case status
     when :character_guessed
-      puts "You've guessed #{input} already."
+      puts(DisplayHelper.formatting('red', "You've guessed '#{input}' already."))
     when :saved
       puts 'Game saved!'
       hm.save_game
@@ -75,13 +75,13 @@ if [1, 2].include?(input)
 
   if hm.secret_word_guessed?
     if hm.word_guessed_in_full
-      puts 'Impressive, you guessed the word in full!'
+      puts DisplayHelper.formatting('green', 'Impressive, you guessed the word in full!')
     else
       puts "Well done, you've guessed it! The secret word is #{hm.secret_word}."
     end
   else
     unless status == :saved
-      puts HANGMAN_STAGES[hm.remaining_turn]
+      puts DisplayHelper::HANGMAN_STAGES[hm.remaining_turn]
       puts "No turns left to guess. The secret word is #{hm.secret_word}."
       puts 'As a punishment, do dead hang for 5 seconds, then perform 2 repetitions of pull-up or one of its variants.'
     end

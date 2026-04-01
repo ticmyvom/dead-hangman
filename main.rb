@@ -42,6 +42,7 @@ when 2
     filename_path = "#{saved_game_path}/#{filename}"
     json_string = File.readlines(filename_path)[0]
     hm = Hangman.from_json(json_string)
+    puts "#{filename} loaded."
   end
 when 3
   puts 'Bye!'
@@ -76,7 +77,7 @@ if [1, 2].include?(input)
     if hm.word_guessed_in_full
       puts 'Impressive, you guessed the word in full!'
     else
-      puts "Well done, you've guessed it!"
+      puts "Well done, you've guessed it! The secret word is #{hm.secret_word}."
     end
   else
     unless status == :saved

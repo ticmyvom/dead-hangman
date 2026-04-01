@@ -28,26 +28,16 @@ class Hangman
   # return message
   def check_input(input)
     return :character_guessed if guessed_characters.include?(input)
+    return :saved if input == 'save!'
 
-    if input == 'save!'
-
-      :saved
-    elsif input == secret_word
+    if input == secret_word
       @current_progress = input.chars
       @word_guessed_in_full = true
     elsif input.length == secret_word.length
       @remaining_turn -= 1
       guessed_characters.add(input)
     else
-      input = sanitize_input(input)
-
-      indices = locate_indices(input)
-      if indices.empty?
-        @remaining_turn -= 1
-      else
-        update_progess(input, indices)
-      end
-      guessed_characters.add(input)
+      check_for_existence_in_the_secret_word(input)
     end
   end
 
@@ -96,6 +86,16 @@ class Hangman
 
   private
 
+  def check_for_existence_in_the_secret_word(input)
+    indices = locate_indices(input)
+    if indices.empty?
+      @remaining_turn -= 1
+    else
+      update_progess(input, indices)
+    end
+    guessed_characters.add(input)
+  end
+
   def sanitize_input(input)
     input.downcase!
     return input[0] if input.length != 1
@@ -103,7 +103,8 @@ class Hangman
     input
   end
 
-  def locate_indices(input_char)
+  def locate_indices(input)
+    input_char = sanitize_input(input)
     indices = []
     secret_word.chars.each_with_index do |char, index|
       indices.append(index) if char == input_char
